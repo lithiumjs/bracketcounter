@@ -4,7 +4,7 @@
 
 ## How to run:
 
-* Install Node.js (if have'nt done so)
+* Install Node.js (if haven't done so)
 * Run cmd (or linux terminal) in this folder
 * Type `npm install`
 * Type `node index.js`
