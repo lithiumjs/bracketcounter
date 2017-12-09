@@ -1,0 +1,15 @@
+{
+  "name": "bfbvotes",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "wtfpl",
+  "dependencies": {
+    "youtube-comments-stream": "^1.4.6"
+  }
+}
