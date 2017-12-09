@@ -1,5 +1,7 @@
 # bfb-votes-collector
 
+**WARNING**: Very slow! Will fix in not-so-distant future.
+
 ## How to run:
 
 * Install Node.js (if have'nt done so)
