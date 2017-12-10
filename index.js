@@ -40,8 +40,12 @@ stream.on('data', function (comment) {
 	commentors[comment.authorLink] = c;
 	process.stdout.write("\033c");
 	// console.log(Object.keys(comment));
-	console.log(`Getting comments... ${comments} comments, ${votes} valid votes`);
-	console.log(Object.keys(votes).map(function(l) {
+	console.log(`Getting comments... ${comments} comments, ${totalvotes} valid votes`);
+	console.log(Object.keys(votes).sort(function(a, b) {
+		if (votes[a] > votes[b]) return -1;
+		if (votes[a] < votes[b]) return 1;
+		return 0;
+	}).map(function(l) {
 		if (c.indexOf(`[${l}]`) > -1) {
 			votes[l]++;
 			totalvotes++;
@@ -57,7 +61,11 @@ stream.on('error', function (err) {
 stream.on('end', function () {
 	process.stdout.write("\033c");
 	console.log("FINAL RESULTS:");
-	console.log(Object.keys(votes).map(function(l, i) {
+	console.log(Object.keys(votes).sort(function(a, b) {
+		if (votes[a] > votes[b]) return -1;
+		if (votes[a] < votes[b]) return 1;
+		return 0;
+	}).map(function(l, i) {
 		return `${contestants[l]}: ${votes[l]}`;
 	}).join("\n"));
 	console.log("____________________________");
