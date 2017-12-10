@@ -3,6 +3,8 @@ const VIDEO_ID = 'AiBqyXNtOEs';
 const stream = commentsStream(VIDEO_ID);
 var comments = 0;
 var votes = {
+	"4": 0,
+	x: 0,
 	a: 0,
 	b: 0,
 	c: 0,
@@ -13,7 +15,10 @@ var votes = {
 	h: 0
 };
 var totalvotes = 0;
+var commentors = {};
 var contestants = {
+	"4": "Four",
+	x: "X",
 	a: "Donut",
 	b: "Bomby",
 	c: "Naily",
@@ -29,20 +34,19 @@ console.log("Getting comments...");
 stream.on('data', function (comment) {
 	// comments.push(comment.text);
 	comments++;
-	try {
-		var c = (comment.text + "").toLowerCase();
-		process.stdout.write("\033c");
-		console.log(`Got ${comments} comments, ${totalvotes} votes, current stats:`);
-		console.log(Object.keys(votes).map(function(l) {
-			if (c.indexOf(`[${l}]`) > -1) {
-				votes[l]++;
-				totalvotes++;
-			}
-			return `${contestants[l]}: ${votes[l]}`;
-		}).join("\n"));
-	} catch (e) {
-		console.log("Something went wrong...");
-	}
+	if (commentors[comment.authorLink]) return;
+	var c = (comment.text + "").toLowerCase();
+	commentors[comment.authorLink] = c;
+	process.stdout.write("\033c");
+	// console.log(Object.keys(comment));
+	console.log(`Got ${comments} comments, ${totalvotes} votes, current stats:`);
+	console.log(Object.keys(votes).map(function(l) {
+		if (c.indexOf(`[${l}]`) > -1) {
+			votes[l]++;
+			totalvotes++;
+		}
+		return `${contestants[l]}: ${votes[l]}`;
+	}).join("\n"));
 });
 
 stream.on('error', function (err) {
