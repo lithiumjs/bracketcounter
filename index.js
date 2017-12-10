@@ -15,6 +15,7 @@ var votes = {
 	h: 0
 };
 var totalvotes = 0;
+var shinycowards = 0;
 var commentors = {};
 var contestants = {
 	"4": "Four",
@@ -34,12 +35,12 @@ console.log("Getting comments...");
 stream.on('data', function (comment) {
 	// comments.push(comment.text);
 	comments++;
-	if (commentors[comment.authorLink]) return;
+	if (commentors[comment.authorLink]) return shinycowards++;
 	var c = (comment.text + "").toLowerCase();
 	commentors[comment.authorLink] = c;
 	process.stdout.write("\033c");
 	// console.log(Object.keys(comment));
-	console.log(`Got ${comments} comments, ${totalvotes} votes, current stats:`);
+	console.log(`Getting comments... ${comments} comments, ${votes} valid votes`);
 	console.log(Object.keys(votes).map(function(l) {
 		if (c.indexOf(`[${l}]`) > -1) {
 			votes[l]++;
@@ -54,18 +55,15 @@ stream.on('error', function (err) {
 });
 
 stream.on('end', function () {
-	console.log('No comments left');
-	// comments.forEach(function(comment) {
-	// 	var c = comment.toLowerCase()
-	// 	Object.keys(votes).forEach(function(l) {
-	// 		if (c.indexOf(`[${l}]`) > -1) {
-	// 			votes[l]++;
-	// 		}
-	// 	});
-	// });
-	// console.log("FINAL RESULTS:")
-	// Object.keys(votes).forEach(function(letter) {
-	// 	console.log(`Votes for: ${contestants[letter]}: ${votes[letter]}`);
-	// });
+	process.stdout.write("\033c");
+	console.log("FINAL RESULTS:");
+	console.log(Object.keys(votes).map(function(l, i) {
+		return `${contestants[l]}: ${votes[l]}`;
+	}).join("\n"));
+	console.log("____________________________");
+	console.log(`Total comments: ${comments}`);
+	console.log(`Total votes: ${totalvotes + shinycowards}`);
+	console.log(`Shiny coward votes: ${shinycowards}`);
+	console.log(`Valid votes: ${totalvotes}`);
 	process.exit();
 });
