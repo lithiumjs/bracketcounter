@@ -3,7 +3,7 @@ const VIDEO_ID = 'AiBqyXNtOEs';
 const stream = commentsStream(VIDEO_ID);
 var comments = 0;
 var votes = {
-	"4": 0,
+	4: 0,
 	x: 0,
 	a: 0,
 	b: 0,
@@ -18,7 +18,7 @@ var totalvotes = 0;
 var shinycowards = 0;
 var commentors = {};
 var contestants = {
-	"4": "Four",
+	4: "Four",
 	x: "X",
 	a: "Donut",
 	b: "Bomby",
@@ -33,24 +33,26 @@ var contestants = {
 console.log("Getting comments...");
 
 stream.on('data', function (comment) {
-	// comments.push(comment.text);
 	comments++;
 	if (commentors[comment.authorLink]) return shinycowards++;
 	var c = (comment.text + "").toLowerCase();
 	commentors[comment.authorLink] = c;
 	process.stdout.write("\033c");
-	// console.log(Object.keys(comment));
 	console.log(`Getting comments... ${comments} comments, ${totalvotes} valid votes`);
 	console.log(Object.keys(votes).sort(function(a, b) {
 		if (votes[a] > votes[b]) return -1;
 		if (votes[a] < votes[b]) return 1;
 		return 0;
 	}).map(function(l) {
+		var width = process.stdout.columns;
 		if (c.indexOf(`[${l}]`) > -1) {
 			votes[l]++;
 			totalvotes++;
 		}
-		return `${contestants[l]}: ${votes[l]}`;
+		var barlength = Math.floor(width * (votes[l] / totalvotes));
+		var bfs = "█";
+		var bms = "▒";
+		return `${contestants[l]}: ${votes[l]}` + "\n" + bfs.repeat(barlength) + bms.repeat(width - barlength);
 	}).join("\n"));
 });
 
@@ -66,9 +68,13 @@ stream.on('end', function () {
 		if (votes[a] < votes[b]) return 1;
 		return 0;
 	}).map(function(l, i) {
-		return `${contestants[l]}: ${votes[l]}`;
+		var width = process.stdout.columns;
+		var barlength = Math.floor(width * (votes[l] / totalvotes));
+		var bfs = "█";
+		var bms = "▒";
+		return `${contestants[l]}: ${votes[l]}` + "\n" + bfs.repeat(barlength) + bms.repeat(width - barlength);
 	}).join("\n"));
-	console.log("____________________________");
+	console.log("_".repeat(process.stdout.columns));
 	console.log(`Total comments: ${comments}`);
 	console.log(`Total votes: ${totalvotes + shinycowards}`);
 	console.log(`Shiny coward votes: ${shinycowards}`);
