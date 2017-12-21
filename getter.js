@@ -4,6 +4,30 @@ var key = "AIzaSyAXpG8mF9Cw0mYv7Rnps-_0z3K9nO5injw"; // thanks figgyc
 
 const stringify = require("querystring").stringify;
 
+function httpsReq(uri, options, callback) {
+	https.get(uri + stringify(options), (res) => {
+		if (res.statusCode != 200) callback({errorCode: res.statusCode});
+
+		var d = [];
+
+		res.on("data", data => d.push(data));
+
+		res.on("end", function() {
+			try {
+				var data = JSON.parse(d.join(""));
+			} catch(e) {
+				// try again
+				return setTimeout(() => httpsReq(uri, options, callback), 0);
+			}
+			if (!data || !data.items) setTimeout(() => httpsReq(uri, options, callback), 0);
+			callback(data);
+		});
+	}).on("error", function(e) {
+		// try yet again
+		setTimeout(() => httpsReq(uri, options, callback), 0);
+	});
+}
+
 function getThread(getter, commentID) {
 	var options = {
 		maxResults: 100,
@@ -12,30 +36,12 @@ function getThread(getter, commentID) {
 		textFormat: "plainText",
 		key: key
 	}
-
-	https.get("https://content.googleapis.com/youtube/v3/comments?" + stringify(options), (res) => {
-		if (res.statusCode != 200) getter.emit("error", res.statusCode);
-
-		d = "";
-
-		res.on("data", function(data) {
-			d = d + data.toString();
+	
+	httpsReq("https://content.googleapis.com/youtube/v3/comments?", options, (data) => {
+		if (data.errorCode) getter.emit("error", data.errorCode);
+		data.items.map(function(item) {
+			getter.emit("data", item.snippet);
 		});
-
-		res.on("end", function() {
-			try {
-				var data = JSON.parse(d);
-			} catch(e) {
-				// try again
-				return setTimeout(() => getThread(getter, commentID), 0);
-			}
-			data.items.map(function(item) {
-				getter.emit("data", item.snippet);
-			});
-		});
-	}).on("error", function(e) {
-		// try yet again
-		setTimeout(() => getThread(getter, commentID), 0);
 	});
 }
 
@@ -52,59 +58,36 @@ function getNext(getter, videoID, pageToken) {
 
 	if (pageToken) options.pageToken = pageToken;
 
-	https.get("https://content.googleapis.com/youtube/v3/commentThreads?" + stringify(options), (res) => {
-		if (res.statusCode != 200) getter.emit("error", res.statusCode);
-
-		d = "";
-
-		res.on("data", function(data) {
-			d = d + data.toString();
+	httpsReq("https://content.googleapis.com/youtube/v3/commentThreads?", options, (data) => {
+		if (data.errorCode) getter.emit("error", data.errorCode);
+		data.items.forEach(function(item) {
+			if (!item || !item.snippet.topLevelComment) return;
+			getter.emit("data", item.snippet.topLevelComment.snippet);
+			if (item.snippet.totalReplyCount > 0) getThread(getter, item.id);
 		});
-
-		res.on("end", function() {
-			try {
-				var data = JSON.parse(d);
-			} catch(e) {
-				// try again
-				return setTimeout(() => getNext(getter, videoID, pageToken), 0);
-			}
-			if (!data || !data.items) return setTimeout(() => getNext(getter, videoID, pageToken), 0);
-			data.items.forEach(function(item) {
-				if (!item || !item.snippet.topLevelComment) return;
-				getter.emit("data", item.snippet.topLevelComment.snippet);
-				if (item.snippet.totalReplyCount > 0) getThread(getter, item.id);
-			});
-			if (data.nextPageToken) {
-				setTimeout(() => getNext(getter, videoID, data.nextPageToken), 0);
-			} else {
-				getter.emit("end");
-			}
-		});
-	}).on("error", (e) => getter.emit("error", e));
+		if (data.nextPageToken) {
+			setTimeout(() => getNext(getter, videoID, data.nextPageToken), 0);
+		} else {
+			getter.emit("end");
+		}
+	});
 }
 
 module.exports = function(videoID) {
 	var Getter = new EventEmitter();
 
-	https.get("https://content.googleapis.com/youtube/v3/videos?" + stringify({
+	var options = {
 		id: videoID,
 		part: "statistics,snippet",
 		key: key
-	}), function(res) {
-		if (res.statusCode != 200) Getter.emit("error", res.statusCode);
+	};
 
-		d = "";
+	httpsReq("https://content.googleapis.com/youtube/v3/videos?", options, (data) => {
+		if (data.errorCode) getter.emit("error", data.errorCode);
 
-		res.on("data", function(data) {
-			d = d + data.toString();
-		});
-
-		res.on("end", function() {
-			var data = JSON.parse(d);
-			var stats = data.items[0].statistics;
-			stats.published = data.items[0].snippet.publishedAt;
-			Getter.emit("stats", stats);
-		});
+		var stats = data.items[0].statistics;
+		stats.published = data.items[0].snippet.publishedAt;
+		Getter.emit("stats", stats);
 	});
 
 	getNext(Getter, videoID);
