@@ -2,10 +2,7 @@ var EventEmitter = require("events").EventEmitter;
 var https = require("https");
 var key = "AIzaSyAXpG8mF9Cw0mYv7Rnps-_0z3K9nO5injw"; // thanks figgyc
 
-function stringify(obj) {
-	return Object.keys(obj).map(key => `${key}=${encodeURIComponent(obj[key])}`).join("&");
-}
-// ^ made by isinkin ^
+const stringify = require("querystring").stringify;
 
 function getThread(getter, commentID) {
 	var options = {
