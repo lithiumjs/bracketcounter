@@ -31,23 +31,18 @@ var contestants = {
 	h: "Barf Bag"
 };
 
-var stats = {};
-// var deadline;
-
 console.log("Getting comments...");
 
 getter.on('stats', function(s) {
 	stats = s;
-	// deadline = new Date(s.published);
-	// deadline.setTime(deadline.getTime() + 172800000); // +48 hours
 });
 
 getter.on('data', function (comment) {
-	// console.log(comment);
 	comments++;
+	var secondsAfter = (new Date(comment.publishedAt).getTime() - new Date(stats.published).getTime()) / 1000;
 	if (!comment || !comment.authorChannelId) return;
 	if (commentors[comment.authorChannelId.value]) return shinycowards++;
-	// if (new Date(comment.publeshedAt).getTime() > deadline.getTime() && /\[.\]/i.test(comment.textDisplay)) return deadlinevotes++;
+	var hasVoted = false;
 	var c = (comment.textDisplay + "").toLowerCase();
 	commentors[comment.authorChannelId.value] = c;
 	process.stdout.write("\033c");
@@ -59,10 +54,17 @@ getter.on('data', function (comment) {
 	}).map(function(l) {
 		var width = process.stdout.columns;
 		if (c.indexOf(`[${l}]`) > -1) {
-			votes[l]++;
-			totalvotes++;
+			if (secondsAfter <= 172800 && !hasVoted) {
+				votes[l]++;
+				totalvotes++;
+				hasVoted = true;
+			} else if (hasVoted) {
+				shinycowards++;
+			} else if (secondsAfter > 172800) {
+				deadlinevotes++;
+			}
 		}
-		var barlength = Math.floor(width * (votes[l] / totalvotes));
+		var barlength = Math.floor(width * (votes[l] / totalvotes)) || 0;
 		var bfs = "█";
 		var bms = "▒";
 		return `${contestants[l]}: ${votes[l]}` + "\n" + bfs.repeat(barlength) + bms.repeat(width - barlength);
@@ -82,7 +84,7 @@ getter.on('end', function () {
 		return 0;
 	}).map(function(l, i) {
 		var width = process.stdout.columns;
-		var barlength = Math.floor(width * (votes[l] / totalvotes));
+		var barlength = Math.floor(width * (votes[l] / totalvotes)) || 0;
 		var bfs = "█";
 		var bms = "▒";
 		return `${contestants[l]}: ${votes[l]}` + "\n" + bfs.repeat(barlength) + bms.repeat(width - barlength);
@@ -91,7 +93,7 @@ getter.on('end', function () {
 	console.log(`Total comments: ${comments}`);
 	console.log(`Total votes: ${totalvotes + shinycowards + deadlinevotes}`);
 	console.log(`Shiny coward votes: ${shinycowards}`);
-	// console.log(`Votes after deadline: ${deadlinevotes}`); // will add later
+	console.log(`Votes after deadline: ${deadlinevotes}`); 
 	console.log(`Valid votes: ${totalvotes}`);
 	process.exit();
 });

@@ -68,7 +68,9 @@ function getNext(getter, videoID, pageToken) {
 				// try again
 				return setTimeout(() => getNext(getter, videoID, pageToken), 0);
 			}
-			data.items.map(function(item) {
+			if (!data || !data.items) return setTimeout(() => getNext(getter, videoID, pageToken), 0);
+			data.items.forEach(function(item) {
+				if (!item || !item.snippet.topLevelComment) return;
 				getter.emit("data", item.snippet.topLevelComment.snippet);
 				if (item.snippet.totalReplyCount > 0) getThread(getter, item.id);
 			});
