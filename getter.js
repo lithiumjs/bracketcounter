@@ -1,6 +1,6 @@
-var EventEmitter = require("events").EventEmitter;
-var https = require("https");
-var key = "AIzaSyAXpG8mF9Cw0mYv7Rnps-_0z3K9nO5injw"; // thanks figgyc
+const EventEmitter = require("events").EventEmitter;
+const https = require("https");
+const key = "AIzaSyAXpG8mF9Cw0mYv7Rnps-_0z3K9nO5injw"; // thanks figgyc
 
 const stringify = require("querystring").stringify;
 
@@ -36,7 +36,7 @@ function getThread(getter, commentID) {
 		textFormat: "plainText",
 		key: key
 	}
-	
+
 	httpsReq("https://content.googleapis.com/youtube/v3/comments?", options, (data) => {
 		if (data.errorCode) getter.emit("error", data.errorCode);
 		data.items.map(function(item) {
