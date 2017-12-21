@@ -45,6 +45,7 @@ getter.on('stats', function(s) {
 getter.on('data', function (comment) {
 	// console.log(comment);
 	comments++;
+	if (!comment || !comment.authorChannelId) return;
 	if (commentors[comment.authorChannelId.value]) return shinycowards++;
 	// if (new Date(comment.publeshedAt).getTime() > deadline.getTime() && /\[.\]/i.test(comment.textDisplay)) return deadlinevotes++;
 	var c = (comment.textDisplay + "").toLowerCase();
