@@ -1,5 +1,5 @@
 var Getter = require("./getter.js");
-const VIDEO_ID = 'AiBqyXNtOEs';
+const VIDEO_ID = 'MiZ8V3NHwfM';
 var getter = Getter(VIDEO_ID);
 var comments = 0;
 var votes = {
@@ -21,14 +21,14 @@ var commentors = {};
 var contestants = {
 	4: "Four",
 	x: "X",
-	a: "Donut",
-	b: "Bomby",
-	c: "Naily",
-	d: "Firey Jr.",
-	e: "Bracelety",
-	f: "Spongy",
-	g: "Gelatin",
-	h: "Barf Bag"
+	a: "Pen",
+	b: "Liy",
+	c: "Black Hole",
+	d: "Tree",
+	e: "Remote",
+	f: "Pie",
+	g: "Bottle",
+	h: "Pillow"
 };
 
 console.log("Getting comments...");
