@@ -12,7 +12,8 @@ var votes = {
 	e: 0,
 	f: 0,
 	g: 0,
-	h: 0
+	h: 0,
+	i: 0
 };
 var totalvotes = 0;
 var shinycowards = 0;
@@ -28,7 +29,8 @@ var contestants = {
 	e: "Remote",
 	f: "Pie",
 	g: "Bottle",
-	h: "Pillow"
+	h: "Pillow",
+	i: "Satomi"
 };
 
 console.log("Getting comments...");
@@ -65,9 +67,9 @@ getter.on('data', function (comment) {
 			}
 		}
 		var barlength = Math.floor(width * (votes[l] / totalvotes)) || 0;
-		var bfs = "█";
-		var bms = "▒";
-		return `${contestants[l]}: ${votes[l]}` + "\n" + bfs.repeat(barlength) + bms.repeat(width - barlength);
+		// var bfs = "█";
+		// var bms = "▒";
+		return `${contestants[l]}: ${votes[l]}` + "\n\033[107m" + " ".repeat(barlength) + "\033[100m" + " ".repeat(width - barlength) + "\033[0m";;
 	}).join("\n"));
 });
 
@@ -85,9 +87,9 @@ getter.on('end', function () {
 	}).map(function(l, i) {
 		var width = process.stdout.columns;
 		var barlength = Math.floor(width * (votes[l] / totalvotes)) || 0;
-		var bfs = "█";
-		var bms = "▒";
-		return `${contestants[l]}: ${votes[l]}` + "\n" + bfs.repeat(barlength) + bms.repeat(width - barlength);
+		// var bfs = "█";
+		// var bms = "▒";
+		return `${contestants[l]}: ${votes[l]}` + "\n\033[107m" + " ".repeat(barlength) + "\033[100m" + " ".repeat(width - barlength) + "\033[0m";
 	}).join("\n"));
 	console.log("_".repeat(process.stdout.columns));
 	console.log(`Total comments: ${comments}`);
