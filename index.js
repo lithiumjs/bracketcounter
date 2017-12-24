@@ -32,8 +32,35 @@ var contestants = {
 	h: "Pillow",
 	i: "Satomi"
 };
+/*
+[A] Pen: Light blue
+[B] Liy: Cyan
+[C] Black Hole: Black
+[D] Tree: Light green
+[E] Remote: Red
+[F] Pie: Yellow
+[G] Bottle: Green
+[H] Pillow: Magenta
+[I] Satomi: Light magenta
+[4] Four: Light cyan
+[X] X: Light yellow
+*/
+var colors = {
+	4: ["\033[106m", "\033[96m"],
+	x: ["\033[103m", "\033[93m"],
+	a: ["\033[104m", "\033[94m"],
+	b: ["\033[46m", "\033[36m"],
+	c: ["\033[40m", "\033[30m"],
+	d: ["\033[102m", "\033[92m"],
+	e: ["\033[41m", "\033[31m"],
+	f: ["\033[43m", "\033[33m"],
+	g: ["\033[42m", "\033[32m"],
+	h: ["\033[45m", "\033[35m"],
+	i: ["\033[105m", "\033[95m"]
+}
 
 console.log("Getting comments...");
+var start = Date.now();
 
 getter.on('stats', function(s) {
 	stats = s;
@@ -48,7 +75,7 @@ getter.on('data', function (comment) {
 	var c = (comment.textDisplay + "").toLowerCase();
 	commentors[comment.authorChannelId.value] = c;
 	process.stdout.write("\033c");
-	console.log(`Getting comments... ${comments}/${stats.commentCount} comments, ${totalvotes} valid votes, ${deadlinevotes} votes after voting deadline`);
+	console.log(`${comments}/${stats.commentCount} comments, ${totalvotes} valid votes, ${deadlinevotes} votes after voting deadline, working for ${(Date.now() - start) / 1000}s`);
 	console.log(Object.keys(votes).sort(function(a, b) {
 		if (votes[a] > votes[b]) return -1;
 		if (votes[a] < votes[b]) return 1;
@@ -67,9 +94,10 @@ getter.on('data', function (comment) {
 			}
 		}
 		var barlength = Math.floor(width * (votes[l] / totalvotes)) || 0;
-		// var bfs = "█";
-		// var bms = "▒";
-		return `${contestants[l]}: ${votes[l]}` + "\n\033[107m" + " ".repeat(barlength) + "\033[100m" + " ".repeat(width - barlength) + "\033[0m";;
+		var textlen = `${contestants[l]}: ${votes[l]}`.length;
+		var filler = width - barlength - textlen;
+		return colors[l][0] + " ".repeat(filler > 0 ? barlength : barlength + filler) + "\033[100m" + " ".repeat(filler > 0 ? filler : 0) + 
+		`${colors[l][1]}${contestants[l]}\x1b[39m: ${votes[l]}` + "\033[0m";
 	}).join("\n"));
 });
 
@@ -87,9 +115,11 @@ getter.on('end', function () {
 	}).map(function(l, i) {
 		var width = process.stdout.columns;
 		var barlength = Math.floor(width * (votes[l] / totalvotes)) || 0;
-		// var bfs = "█";
-		// var bms = "▒";
-		return `${contestants[l]}: ${votes[l]}` + "\n\033[107m" + " ".repeat(barlength) + "\033[100m" + " ".repeat(width - barlength) + "\033[0m";
+		var textlen = `${contestants[l]}: ${votes[l]}`.length;
+		var filler = width - barlength - textlen;
+		// return `${contestants[l]}: ${votes[l]}` + "\n\033[107m" + " ".repeat(barlength) + "\033[100m" + " ".repeat(width - barlength) + "\033[0m";
+		return colors[l][0] + " ".repeat(filler > 0 ? barlength : barlength + filler) + "\033[100m" + " ".repeat(filler > 0 ? filler : 0) + 
+		`${colors[l][1]}${contestants[l]}\x1b[39m: ${votes[l]}` + "\033[0m";
 	}).join("\n"));
 	console.log("_".repeat(process.stdout.columns));
 	console.log(`Total comments: ${comments}`);
@@ -97,5 +127,6 @@ getter.on('end', function () {
 	console.log(`Shiny coward votes: ${shinycowards}`);
 	console.log(`Votes after deadline: ${deadlinevotes}`); 
 	console.log(`Valid votes: ${totalvotes}`);
+	console.log(`Work time: ${(Date.now() - start) / 1000}s`);
 	process.exit();
 });
