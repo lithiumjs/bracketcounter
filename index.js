@@ -3,8 +3,8 @@ const VIDEO_ID = 'MiZ8V3NHwfM';
 var getter = Getter(VIDEO_ID);
 var comments = 0;
 var votes = {
-	4: 0,
-	x: 0,
+	// 4: 0,
+	// x: 0,
 	a: 0,
 	b: 0,
 	c: 0,
@@ -12,8 +12,8 @@ var votes = {
 	e: 0,
 	f: 0,
 	g: 0,
-	h: 0,
-	i: 0
+	h: 0
+	// i: 0
 };
 var totalvotes = 0;
 var shinycowards = 0;
@@ -21,8 +21,8 @@ var shinline = 0;
 var deadlinevotes = 0;
 var commentors = {};
 var contestants = {
-	4: "Four",
-	x: "X",
+	// 4: "Four",
+	// x: "X",
 	a: "Pen",
 	b: "Liy",
 	c: "Black Hole",
@@ -30,8 +30,8 @@ var contestants = {
 	e: "Remote",
 	f: "Pie",
 	g: "Bottle",
-	h: "Pillow",
-	i: "Satomi"
+	h: "Pillow"
+	// i: "Satomi"
 };
 /*
 [A] Pen: Light blue
@@ -47,8 +47,8 @@ var contestants = {
 [X] X: Light yellow
 */
 var colors = {
-	4: ["\033[106m", "\033[96m"],
-	x: ["\033[103m", "\033[93m"],
+	// 4: ["\033[106m", "\033[96m"],
+	// x: ["\033[103m", "\033[93m"],
 	a: ["\033[104m", "\033[94m"],
 	b: ["\033[46m", "\033[36m"],
 	c: ["\033[40m", "\033[30m"],
@@ -56,8 +56,8 @@ var colors = {
 	e: ["\033[41m", "\033[31m"],
 	f: ["\033[43m", "\033[33m"],
 	g: ["\033[42m", "\033[32m"],
-	h: ["\033[45m", "\033[35m"],
-	i: ["\033[105m", "\033[95m"]
+	h: ["\033[45m", "\033[35m"]
+	// i: ["\033[105m", "\033[95m"]
 }
 
 console.log("Getting comments...");
@@ -74,9 +74,8 @@ getter.on('data', function (comment) {
 	if (commentors[comment.authorChannelId.value]) return shinycowards++;
 	var hasVoted = false;
 	var c = (comment.textDisplay + "").toLowerCase();
-	commentors[comment.authorChannelId.value] = c;
 	process.stdout.write("\033c");
-	console.log(`${comments}/${stats.commentCount} comments, \x1b[92m${totalvotes} valid votes\x1b[0m, \x1b[31m${deadlinevotes} votes after voting deadline\x1b[0m, working for ${(Date.now() - start) / 1000}s`);
+	console.log(`${comments}/${stats.commentCount} comments, \x1b[92m${totalvotes} valid votes\x1b[0m, \x1b[31m${deadlinevotes} deadlined \x1b[0m, \x1b[33m${shinycowards} shiny cowards\x1b[0m, working for ${(Date.now() - start) / 1000}s`);
 	var width = process.stdout.columns;
 	var multiplier = width / comments;
 	var voteline = Math.floor(totalvotes * multiplier);
@@ -95,6 +94,7 @@ getter.on('data', function (comment) {
 				votes[l]++;
 				totalvotes++;
 				hasVoted = true;
+				commentors[comment.authorChannelId.value] = c;
 			} else if (secondsAfter > 172800) {
 				deadlinevotes++;
 			} else if (hasVoted) {
@@ -129,12 +129,19 @@ getter.on('end', function () {
 		return colors[l][0] + " ".repeat(filler > 0 ? barlength : barlength + filler) + "\033[100m" + " ".repeat(filler > 0 ? filler : 0) + 
 		`${colors[l][1]}${contestants[l]}\x1b[39m: ${votes[l]}` + "\033[0m";
 	}).join("\n"));
-	console.log("_".repeat(process.stdout.columns));
+	console.log();
+	var width = process.stdout.columns;
+	var multiplier = width / comments;
+	var voteline = Math.floor(totalvotes * multiplier);
+	var deadlineline = Math.floor(deadlinevotes * multiplier);
+	var cowardline = Math.floor(shinycowards * multiplier);
+	var filler = width - voteline - deadlineline - cowardline;
+	console.log(`\x1b[102m${" ".repeat(voteline)}\x1b[43m${" ".repeat(cowardline)}\x1b[41m${" ".repeat(deadlineline)}\x1b[100m${" ".repeat(filler)}\x1b[0m`);
 	console.log(`Total comments: ${comments}`);
 	console.log(`Total votes: ${totalvotes + shinycowards + deadlinevotes}`);
-	console.log(`Shiny coward votes: ${shinycowards + shinline}`);
-	console.log(`Votes after deadline: ${deadlinevotes}`); 
-	console.log(`Valid votes: ${totalvotes}`);
+	console.log(`\x1b[33mShiny coward votes\x1b[0m: ${shinycowards + shinline}`);
+	console.log(`\x1b[31mVotes after deadline\x1b[0m: ${deadlinevotes}`); 
+	console.log(`\x1b[92mValid votes\x1b[0m: ${totalvotes}`);
 	console.log(`Work time: ${(Date.now() - start) / 1000}s`);
 	process.exit();
 });
