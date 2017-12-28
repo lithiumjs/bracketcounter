@@ -17,6 +17,7 @@ var votes = {
 };
 var totalvotes = 0;
 var shinycowards = 0;
+var shinline = 0;
 var deadlinevotes = 0;
 var commentors = {};
 var contestants = {
@@ -75,7 +76,14 @@ getter.on('data', function (comment) {
 	var c = (comment.textDisplay + "").toLowerCase();
 	commentors[comment.authorChannelId.value] = c;
 	process.stdout.write("\033c");
-	console.log(`${comments}/${stats.commentCount} comments, ${totalvotes} valid votes, ${deadlinevotes} votes after voting deadline, working for ${(Date.now() - start) / 1000}s`);
+	console.log(`${comments}/${stats.commentCount} comments, \x1b[92m${totalvotes} valid votes\x1b[0m, \x1b[31m${deadlinevotes} votes after voting deadline\x1b[0m, working for ${(Date.now() - start) / 1000}s`);
+	var width = process.stdout.columns;
+	var multiplier = width / comments;
+	var voteline = Math.floor(totalvotes * multiplier);
+	var deadlineline = Math.floor(deadlinevotes * multiplier);
+	var cowardline = Math.floor(shinycowards * multiplier);
+	var filler = width - voteline - deadlineline - cowardline;
+	console.log(`\x1b[102m${" ".repeat(voteline)}\x1b[43m${" ".repeat(cowardline)}\x1b[41m${" ".repeat(deadlineline)}\x1b[100m${" ".repeat(filler)}\x1b[0m`);
 	console.log(Object.keys(votes).sort(function(a, b) {
 		if (votes[a] > votes[b]) return -1;
 		if (votes[a] < votes[b]) return 1;
@@ -87,10 +95,10 @@ getter.on('data', function (comment) {
 				votes[l]++;
 				totalvotes++;
 				hasVoted = true;
-			} else if (hasVoted) {
-				shinycowards++;
 			} else if (secondsAfter > 172800) {
 				deadlinevotes++;
+			} else if (hasVoted) {
+				shinline++;
 			}
 		}
 		var barlength = Math.floor(width * (votes[l] / totalvotes)) || 0;
@@ -124,7 +132,7 @@ getter.on('end', function () {
 	console.log("_".repeat(process.stdout.columns));
 	console.log(`Total comments: ${comments}`);
 	console.log(`Total votes: ${totalvotes + shinycowards + deadlinevotes}`);
-	console.log(`Shiny coward votes: ${shinycowards}`);
+	console.log(`Shiny coward votes: ${shinycowards + shinline}`);
 	console.log(`Votes after deadline: ${deadlinevotes}`); 
 	console.log(`Valid votes: ${totalvotes}`);
 	console.log(`Work time: ${(Date.now() - start) / 1000}s`);
