@@ -74,21 +74,18 @@ getter.on('data', function (comment) {
 	if (commentors[comment.authorChannelId.value]) return shinycowards++;
 	var hasVoted = false;
 	var c = (comment.textDisplay + "").toLowerCase();
-	process.stdout.write("\033c");
-	console.log(`${comments}/${stats.commentCount} comments, \x1b[92m${totalvotes} valid votes\x1b[0m, \x1b[31m${deadlinevotes} deadlined \x1b[0m, \x1b[33m${shinycowards} shiny cowards\x1b[0m, working for ${(Date.now() - start) / 1000}s`);
+	if (comments % 100 == 0) {
+		process.stdout.write("\033c");
+		console.log(`${comments}/${stats.commentCount} comments, \x1b[92m${totalvotes} valid votes\x1b[0m, \x1b[31m${deadlinevotes} deadlined \x1b[0m, \x1b[33m${shinycowards} shiny cowards\x1b[0m, working for ${(Date.now() - start) / 1000}s`);
+	}
 	var width = process.stdout.columns;
 	var multiplier = width / comments;
 	var voteline = Math.floor(totalvotes * multiplier);
 	var deadlineline = Math.floor(deadlinevotes * multiplier);
 	var cowardline = Math.floor(shinycowards * multiplier);
 	var filler = width - voteline - deadlineline - cowardline;
-	console.log(`\x1b[102m${" ".repeat(voteline)}\x1b[43m${" ".repeat(cowardline)}\x1b[41m${" ".repeat(deadlineline)}\x1b[100m${" ".repeat(filler)}\x1b[0m`);
-	console.log(Object.keys(votes).sort(function(a, b) {
-		if (votes[a] > votes[b]) return -1;
-		if (votes[a] < votes[b]) return 1;
-		return 0;
-	}).map(function(l) {
-		var width = process.stdout.columns;
+	if (comments % 100 == 0) console.log(`\x1b[102m${" ".repeat(voteline)}\x1b[43m${" ".repeat(cowardline)}\x1b[41m${" ".repeat(deadlineline)}\x1b[100m${" ".repeat(filler)}\x1b[0m`);
+	Object.keys(votes).forEach(function(l) {
 		if (c.indexOf(`[${l}]`) > -1) {
 			if (secondsAfter <= 172800 && !hasVoted) {
 				votes[l]++;
@@ -101,6 +98,13 @@ getter.on('data', function (comment) {
 				shinline++;
 			}
 		}
+	});
+	if (comments % 100 == 0) console.log(Object.keys(votes).sort(function(a, b) {
+		if (votes[a] > votes[b]) return -1;
+		if (votes[a] < votes[b]) return 1;
+		return 0;
+	}).map(function(l) {
+		var width = process.stdout.columns;
 		var barlength = Math.floor(width * (votes[l] / totalvotes)) || 0;
 		var textlen = `${contestants[l]}: ${votes[l]}`.length;
 		var filler = width - barlength - textlen;
