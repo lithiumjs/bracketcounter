@@ -60,6 +60,17 @@ var colors = {
 	// i: ["\033[105m", "\033[95m"]
 }
 
+var checker = /\[([a-h])\]/gi;
+
+function allMatches(str, checker) {
+	var matches = []
+	var result;
+	while (result = checker.exec(str)) {
+		matches.push(result[1]);
+	}
+	return matches;
+}
+
 console.log("Getting comments...");
 var start = Date.now();
 
@@ -85,18 +96,16 @@ getter.on('data', function (comment) {
 	var cowardline = Math.floor(shinycowards * multiplier);
 	var filler = width - voteline - deadlineline - cowardline;
 	if (comments % 100 == 0) console.log(`\x1b[102m${" ".repeat(voteline)}\x1b[43m${" ".repeat(cowardline)}\x1b[41m${" ".repeat(deadlineline)}\x1b[100m${" ".repeat(filler)}\x1b[0m`);
-	Object.keys(votes).forEach(function(l) {
-		if (c.indexOf(`[${l}]`) > -1) {
-			if (secondsAfter <= 172800 && !hasVoted) {
-				votes[l]++;
-				totalvotes++;
-				hasVoted = true;
-				commentors[comment.authorChannelId.value] = c;
-			} else if (secondsAfter > 172800) {
-				deadlinevotes++;
-			} else if (hasVoted) {
-				shinline++;
-			}
+	allMatches(c, checker).forEach(function(l) {
+		if (secondsAfter <= 172800 && !hasVoted) {
+			votes[l]++;
+			totalvotes++;
+			hasVoted = true;
+			commentors[comment.authorChannelId.value] = c;
+		} else if (secondsAfter > 172800) {
+			deadlinevotes++;
+		} else if (hasVoted) {
+			shinline++;
 		}
 	});
 	if (comments % 100 == 0) console.log(Object.keys(votes).sort(function(a, b) {
