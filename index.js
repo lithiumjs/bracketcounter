@@ -126,7 +126,7 @@ getter.on('end', function () {
 	var filler = width - voteline - deadlineline - cowardline;
 	console.log(`\x1b[102m${" ".repeat(voteline)}\x1b[43m${" ".repeat(cowardline)}\x1b[41m${" ".repeat(deadlineline)}\x1b[100m${" ".repeat(filler)}\x1b[0m`);
 	console.log(`Total comments: ${comments}`);
-	console.log(`Total votes: ${totalvotes + shinycowards + deadlinevotes}`);
+	console.log(`Total votes: ${totalvotes + shinycowards + shinline + deadlinevotes}`);
 	console.log(`\x1b[33mShiny coward votes\x1b[0m: ${shinycowards + shinline}`);
 	console.log(`\x1b[31mVotes after deadline\x1b[0m: ${deadlinevotes}`); 
 	console.log(`\x1b[92mValid votes\x1b[0m: ${totalvotes}`);
