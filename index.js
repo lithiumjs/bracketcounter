@@ -1,19 +1,15 @@
 var Getter = require("./getter.js");
-const VIDEO_ID = 'MiZ8V3NHwfM';
+const VIDEO_ID = 'K-JvpRzBmBA';
 var getter = Getter(VIDEO_ID);
 var comments = 0;
 var votes = {
-	// 4: 0,
-	// x: 0,
 	a: 0,
 	b: 0,
 	c: 0,
 	d: 0,
 	e: 0,
 	f: 0,
-	g: 0,
-	h: 0
-	// i: 0
+	g: 0
 };
 var totalvotes = 0;
 var shinycowards = 0;
@@ -21,46 +17,25 @@ var shinline = 0;
 var deadlinevotes = 0;
 var commentors = {};
 var contestants = {
-	// 4: "Four",
-	// x: "X",
-	a: "Pen",
-	b: "Liy",
-	c: "Black Hole",
-	d: "Tree",
-	e: "Remote",
-	f: "Pie",
-	g: "Bottle",
-	h: "Pillow"
-	// i: "Satomi"
+	a: "David",
+	b: "Woody",
+	c: "Nickel",
+	d: "Balloony",
+	e: "Roboty",
+	f: "Rocky",
+	g: "Cloudy"
 };
-/*
-[A] Pen: Light blue
-[B] Liy: Cyan
-[C] Black Hole: Black
-[D] Tree: Light green
-[E] Remote: Red
-[F] Pie: Yellow
-[G] Bottle: Green
-[H] Pillow: Magenta
-[I] Satomi: Light magenta
-[4] Four: Light cyan
-[X] X: Light yellow
-*/
 var colors = {
-	// 4: ["\033[106m", "\033[96m"],
-	// x: ["\033[103m", "\033[93m"],
-	a: ["\033[104m", "\033[94m"],
-	b: ["\033[46m", "\033[36m"],
-	c: ["\033[40m", "\033[30m"],
-	d: ["\033[102m", "\033[92m"],
+	a: ["\033[107m", "\033[97m"],
+	b: ["\033[102m", "\033[92m"],
+	c: ["\033[47m", "\033[37m"],
+	d: ["\033[42m", "\033[32m"],
 	e: ["\033[41m", "\033[31m"],
 	f: ["\033[43m", "\033[33m"],
-	g: ["\033[42m", "\033[32m"],
-	h: ["\033[45m", "\033[35m"]
-	// i: ["\033[105m", "\033[95m"]
+	g: ["\033[106m", "\033[96m"]
 }
 
-var checker = /\[([a-h])\]/gi;
+var checker = /\[([a-g])\]/gi;
 
 function allMatches(str, checker) {
 	var matches = []

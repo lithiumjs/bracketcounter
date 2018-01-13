@@ -6,7 +6,8 @@ const stringify = require("querystring").stringify;
 
 function httpsReq(uri, options, callback) {
 	https.get(uri + stringify(options), (res) => {
-		if (res.statusCode != 200) callback({errorCode: res.statusCode});
+		if (res.statusCode == 403 || res.statusCode == 404) return callback({errorCode: res.statusCode});
+		else if (res.statusCode != 200) return setTimeout(() => httpsReq(uri, options, callback), 0);
 
 		var d = [];
 
