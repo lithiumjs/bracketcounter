@@ -57,13 +57,16 @@ getter.on('data', function (comment) {
 	comments++;
 	var secondsAfter = (new Date(comment.publishedAt).getTime() - new Date(stats.published).getTime()) / 1000;
 	if (!comment || !comment.authorChannelId) return;
-	if (commentors[comment.authorChannelId.value]) return shinycowards++;
 	var hasVoted = false;
+	if (commentors[comment.authorChannelId.value]) {
+		hasVoted = true;
+		shinycowards++;
+	}
 	var c = (comment.textDisplay + "").toLowerCase();
 	if (comments % 100 == 0) {
 		process.stdout.write("\033c");
-		console.log(`${comments}/${stats.commentCount} comments, \x1b[92m${totalvotes} valid votes\x1b[0m, \x1b[31m${deadlinevotes} deadlined \x1b[0m, \x1b[33m${shinycowards} shiny cowards\x1b[0m, working for ${(Date.now() - start) / 1000}s`);
-	}
+		console.log(`${comments}/${stats.commentCount} comments, \x1b[92m${totalvotes} valid votes\x1b[0m, \x1b[31m${deadlinevotes} deadlined \x1b[0m, \x1b[33m${shinline} shiny cowards\x1b[0m, working for ${(Date.now() - start) / 1000}s`);
+	} 
 	var width = process.stdout.columns;
 	var multiplier = width / comments;
 	var voteline = Math.floor(totalvotes * multiplier);
@@ -127,7 +130,7 @@ getter.on('end', function () {
 	console.log(`\x1b[102m${" ".repeat(voteline)}\x1b[43m${" ".repeat(cowardline)}\x1b[41m${" ".repeat(deadlineline)}\x1b[100m${" ".repeat(filler)}\x1b[0m`);
 	console.log(`Total comments: ${comments}`);
 	console.log(`Total votes: ${totalvotes + shinycowards + shinline + deadlinevotes}`);
-	console.log(`\x1b[33mShiny coward votes\x1b[0m: ${shinycowards + shinline}`);
+	console.log(`\x1b[33mShiny coward votes\x1b[0m: ${shinline}`);
 	console.log(`\x1b[31mVotes after deadline\x1b[0m: ${deadlinevotes}`); 
 	console.log(`\x1b[92mValid votes\x1b[0m: ${totalvotes}`);
 	console.log(`Work time: ${(Date.now() - start) / 1000}s`);
