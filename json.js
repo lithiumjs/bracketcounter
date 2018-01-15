@@ -1,5 +1,5 @@
 var Getter = require("./getter.js");
-const VIDEO_ID = 'MiZ8V3NHwfM';
+const VIDEO_ID = 'K-JvpRzBmBA';
 var getter = Getter(VIDEO_ID);
 var comments = 0;
 var commentObjs = [];
@@ -10,8 +10,7 @@ var votes = {
 	d: 0,
 	e: 0,
 	f: 0,
-	g: 0,
-	h: 0
+	g: 0
 };
 var totalvotes = 0;
 var shinycowards = 0;
@@ -21,16 +20,15 @@ var commentors = {};
 var exportedjson = {};
 var fs = require("fs");
 var contestants = {
-	a: "Pen",
-	b: "Liy",
-	c: "Black Hole",
-	d: "Tree",
-	e: "Remote",
-	f: "Pie",
-	g: "Bottle",
-	h: "Pillow"
+	a: "David",
+	b: "Woody",
+	c: "Nickel",
+	d: "Balloony",
+	e: "Roboty",
+	f: "Rocky",
+	g: "Cloudy"
 };
-var checker = /\[([a-h])\]/gi;
+var checker = /\[([a-g])\]/gi;
 process.stdout.write("Getting comments... ");
 
 function allMatches(str, checker) {
@@ -88,8 +86,7 @@ getter.on('end', function () {
 		d: 0,
 		e: 0,
 		f: 0,
-		g: 0,
-		h: 0,
+		g: 0
 	}
 	commentObjs.sort(function(a, b) {
 		if (new Date(a.timestamp).getTime() < new Date(b.timestamp).getTime()) return -1;
