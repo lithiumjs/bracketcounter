@@ -16,6 +16,7 @@ var shinycowards = 0;
 var shinline = 0;
 var deadlinevotes = 0;
 var commentors = {};
+var thecowards = {};
 var contestants = {
 	a: "David",
 	b: "Woody",
@@ -79,11 +80,13 @@ getter.on('data', function (comment) {
 			votes[l]++;
 			totalvotes++;
 			hasVoted = true;
-			commentors[comment.authorChannelId.value] = c;
+			commentors[comment.authorChannelId.value] = 1;
 		} else if (secondsAfter > 172800) {
 			deadlinevotes++;
 		} else if (hasVoted) {
 			shinline++;
+			commentors[comment.authorChannelId.value]++;
+			thecowards[comment.authorDisplayName] = (thecowards[comment.authorDisplayName] || 0) + 1
 		}
 	});
 	if (comments % 100 == 0) console.log(Object.keys(votes).sort(function(a, b) {
@@ -127,12 +130,17 @@ getter.on('end', function () {
 	var deadlineline = Math.floor(deadlinevotes * multiplier);
 	var cowardline = Math.floor(shinycowards * multiplier);
 	var filler = width - voteline - deadlineline - cowardline;
+	var theShiniest = Object.keys(thecowards).reduce((shiniest, rn) => {
+		if (thecowards[rn] > thecowards[shiniest]) return rn;
+		else return shiniest;
+	})
 	console.log(`\x1b[102m${" ".repeat(voteline)}\x1b[43m${" ".repeat(cowardline)}\x1b[41m${" ".repeat(deadlineline)}\x1b[100m${" ".repeat(filler)}\x1b[0m`);
 	console.log(`Total comments: ${comments}`);
 	console.log(`Total votes: ${totalvotes + shinycowards + shinline + deadlinevotes}`);
 	console.log(`\x1b[33mShiny coward votes\x1b[0m: ${shinline}`);
 	console.log(`\x1b[31mVotes after deadline\x1b[0m: ${deadlinevotes}`); 
 	console.log(`\x1b[92mValid votes\x1b[0m: ${totalvotes}`);
+	console.log(`The shiniest coward: ${theShiniest} (${thecowards[theShiniest]} votes)`);
 	console.log(`Work time: ${(Date.now() - start) / 1000}s`);
 	process.exit();
 });
