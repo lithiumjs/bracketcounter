@@ -39,7 +39,7 @@ var colors = {
 	h: ["\033[44m", "\033[34m"]
 }
 
-var checker = /\[([a-g])\]/gi;
+var checker = /\[([a-h])\]/gi;
 
 function allMatches(str, checker) {
 	var matches = []
