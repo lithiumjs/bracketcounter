@@ -79,7 +79,8 @@ getter.on('end', function () {
 		d: 0,
 		e: 0,
 		f: 0,
-		g: 0
+		g: 0,
+		h: 0
 	}
 	Object.keys(commentObjs).sort(function(a, b) {
 		if (new Date(a).getTime() < new Date(b).getTime()) return -1;
