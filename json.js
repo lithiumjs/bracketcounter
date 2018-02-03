@@ -1,5 +1,5 @@
 var Getter = require("./getter.js");
-const VIDEO_ID = 'K-JvpRzBmBA';
+var VIDEO_ID = 'ES9CvQRJqRM';
 var getter = Getter(VIDEO_ID);
 var comments = 0;
 var commentObjs = {};
@@ -10,7 +10,8 @@ var votes = {
 	d: 0,
 	e: 0,
 	f: 0,
-	g: 0
+	g: 0,
+	h: 0
 };
 var totalvotes = 0;
 var shinycowards = 0;
