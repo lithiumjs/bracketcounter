@@ -1,5 +1,5 @@
 var Getter = require("./getter.js");
-var VIDEO_ID = 'ES9CvQRJqRM';
+var VIDEO_ID = 'SDaS5VNbVOo';
 var getter = Getter(VIDEO_ID);
 var comments = 0;
 var commentObjs = {};
@@ -20,7 +20,7 @@ var deadlinevotes = 0;
 var commentors = {};
 var exportedjson = {};
 var fs = require("fs");
-var checker = /\[([a-g])\]/gi;
+var checker = /\[([a-h])\]/gi;
 process.stdout.write("Getting comments... ");
 
 function allMatches(str, checker) {
