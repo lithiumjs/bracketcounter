@@ -1,5 +1,5 @@
 var Getter = require("./getter.js");
-var VIDEO_ID = 'SDaS5VNbVOo';
+var VIDEO_ID = 'X7ZoFJhBE5o';
 var getter = Getter(VIDEO_ID);
 var comments = 0;
 var votes = {
@@ -9,8 +9,7 @@ var votes = {
 	d: 0,
 	e: 0,
 	f: 0,
-	g: 0,
-	h: 0
+	g: 0
 };
 var totalvotes = 0;
 var shinycowards = 0;
@@ -19,27 +18,25 @@ var deadlinevotes = 0;
 var commentors = {};
 var thecowards = {};
 var contestants = {
-	a: "Tennis Ball",
-	b: "Golf Ball",
-	c: "Basketball",
-	d: "Grassy",
-	e: "TV",
-	f: "8-ball",
-	g: "Blocky",
-	h: "Robot Flower"
+	a: "Flower",
+	b: "Snowball",
+	c: "Bubble",
+	d: "Fanny",
+	e: "Ruby",
+	f: "Lightning",
+	g: "Match"
 };
 var colors = {
-	a: ["\033[43m", "\033[33m"],
-	b: ["\033[47m", "\033[37m"],
-	c: ["\033[41m", "\033[31m"],
-	d: ["\033[102m", "\033[92m"],
-	e: ["\033[46m", "\033[36m"],
-	f: ["\033[40m", "\033[30m"],
-	g: ["\033[101m", "\033[91m"],
-	h: ["\033[105m", "\033[95m"]
+	a: ["\033[35m", "\033[43m"],
+	b: ["\033[37m", "\033[40m"],
+	c: ["\033[36m", "\033[31m"],
+	d: ["\033[34m", "\033[92m"],
+	e: ["\033[31m", "\033[36m"],
+	f: ["\033[33m", "\033[30m"],
+	g: ["\033[31m", "\033[91m"]
 }
 
-var checker = /\[([a-h])\]/gi;
+var checker = /\[([a-g])\]/gi;
 
 function allMatches(str, checker) {
 	var matches = []
