@@ -15,7 +15,9 @@ const stats = {
 	shinyCowards: 0,
 	votesAfterDeadline: 0,
 	commentors: {},
-	cowardVotes: {},
+	cowardVotes: {
+		nobody: 0
+	},
 	videoStats: {},
 	startedAt: Date.now()
 };
@@ -159,7 +161,7 @@ getter.on("end", () => {
 				util.colors.reset);
 
 	const theShiniestCoward = Object.keys(stats.cowardVotes)
-		.reduce((s, r) => (stats.cowardVotes[r] > stats.cowardVotes[s]) ? r : s);
+		.reduce((s, r) => (stats.cowardVotes[r] > stats.cowardVotes[s]) ? r : s, "nobody");
 	const totalCowards = Object.values(stats.cowardVotes).reduce((a, b) => a + b);
 
 	console.log(`Total comments: ${stats.commentCount}`);
