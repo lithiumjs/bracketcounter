@@ -1,24 +1,16 @@
 {
-	"videoID": "2EMeuBFr0_Y",
+	"videoID": "VIDEO ID GOES HERE",
 	"names": [
-		"Black Square",
-		"Organic Fruit and Grain Bar",
-		"Incense Holder",
-		"Loren",
-		"Corny",
-		"Paintball",
-		"Graffiti",
-		"Microphone"
+		"Contestant",
+		"NAMES",
+		"GO",
+		"HERE"
 	],
 	"colors": [
 		"black",
-		"magenta",
-		"green",
-		"white",
+		"blue",
 		"yellow",
-		"red",
-		"light_yellow",
-		"light_gray"
+		"light_yellow"
 	],
 	"deadlineAfter": 172800
 }

@@ -3,8 +3,8 @@
 ## How to run:
 
 1. Install Node.js (if haven't done so)
-2. Run cmd (or linux terminal) in this folder
-3. ~~Type `npm install`~~ It now relies on my comments getter so no need to do that.
+2. Modify `config.json` (see changeable things)
+3. Run cmd (or linux terminal) in this folder
 4. Type `node index.js`
 5. Just wait
 
@@ -16,7 +16,7 @@
     * `colors`: Color codes for corresponding contestants
     * `deadlineAfter`: Number of seconds since the video has been uploaded, when the votes are valid
 
-## List of colors
+## List of valid colors
 
 * `black`
 * `red`
