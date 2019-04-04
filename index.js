@@ -15,9 +15,7 @@ const stats = {
 	shinyCowards: 0,
 	votesAfterDeadline: 0,
 	commentors: {},
-	cowardVotes: {
-		nobody: 0
-	},
+	cowardVotes: {},
 	videoStats: {},
 	startedAt: Date.now()
 };
@@ -160,8 +158,10 @@ getter.on("end", () => {
 				" ".repeat(filler) +
 				util.colors.reset);
 
-	const theShiniestCoward = Object.keys(stats.cowardVotes)
-		.reduce((s, r) => (stats.cowardVotes[r] > stats.cowardVotes[s]) ? r : s, "nobody");
+	if (Object.keys(stats.cowardVotes).length !== 0) {
+		const theShiniestCoward = Object.keys(stats.cowardVotes)
+			.reduce((s, r) => (stats.cowardVotes[r] > stats.cowardVotes[s]) ? r : s);
+	}
 	const totalCowards = Object.values(stats.cowardVotes).reduce((a, b) => a + b);
 
 	console.log(`Total comments: ${stats.commentCount}`);
@@ -169,7 +169,9 @@ getter.on("end", () => {
 	console.log(`${fg.yellow}Shiny coward votes${util.colors.reset}: ${totalCowards}`);
 	console.log(`${fg.red}Votes after deadline${util.colors.reset}: ${stats.votesAfterDeadline}`);
 	console.log(`${fg.light_green}Valid votes${util.colors.reset}: ${totalVotes}`);
-	console.log(`The shiniest coward: ${theShiniestCoward} (${stats.cowardVotes[theShiniestCoward]} votes)`);
+	if (theShiniestCoward) {
+		console.log(`The shiniest coward: ${theShiniestCoward} (${stats.cowardVotes[theShiniestCoward]} votes)`);
+	}
 	console.log(`Work time: ${(Date.now() - stats.startedAt) / 1000}s`);
 	process.exit();
 });
