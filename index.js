@@ -47,20 +47,20 @@ getter.on("data", comment => {
 	const c = (comment.textDisplay + "").toLowerCase();
 	const timeDifference = (new Date(comment.publishedAt).getTime() - new Date(stats.videoStats.published).getTime()) / 1000;
 
-	// console.log(util.allMatches(c, checker))
-
-	util.allMatches(c, checker).forEach(l => {
-		if ((timeDifference <= config.deadlineAfter || config.deadlineAfter == 0) && !hasAlreadyVoted) {
-			stats.votes[l] = (stats.votes[l] || 0) + 1;
-			hasAlreadyVoted = true;
-			stats.commentors[comment.authorChannelId.value] = 1;
-		} else if (timeDifference > config.deadlineAfter && config.deadlineAfter > 0) {
-			++stats.votesAfterDeadline;
-		} else if (hasAlreadyVoted) {
-			++stats.commentors[comment.authorChannelId.value];
-			stats.cowardVotes[comment.authorDisplayName] = (stats.cowardVotes[comment.authorDisplayName] || 0) + 1
-		}
-	});
+	if (timeDifference <= config.deadlineAfter || config.deadlineAfter == 0) {
+		util.allMatches(c, checker).forEach(l => {
+			if (!hasAlreadyVoted) {
+				stats.votes[l] = (stats.votes[l] || 0) + 1;
+				hasAlreadyVoted = true;
+				stats.commentors[comment.authorChannelId.value] = 1;
+			} else {
+				++stats.commentors[comment.authorChannelId.value];
+				stats.cowardVotes[comment.authorDisplayName] = (stats.cowardVotes[comment.authorDisplayName] || 0) + 1
+			}
+		});
+	} else if (checker.test(c)) {
+		++stats.votesAfterDeadline;
+	}
 
 	if (stats.commentCount % 100 == 0) {
 		const totalVotes = Object.values(stats.votes).reduce((a, b) => a + b);
@@ -158,10 +158,12 @@ getter.on("end", () => {
 				" ".repeat(filler) +
 				util.colors.reset);
 
+	let theShiniestCoward;
 	if (Object.keys(stats.cowardVotes).length !== 0) {
-		const theShiniestCoward = Object.keys(stats.cowardVotes)
+		theShiniestCoward = Object.keys(stats.cowardVotes)
 			.reduce((s, r) => (stats.cowardVotes[r] > stats.cowardVotes[s]) ? r : s);
 	}
+	
 	const totalCowards = Object.values(stats.cowardVotes).reduce((a, b) => a + b);
 
 	console.log(`Total comments: ${stats.commentCount}`);
