@@ -164,7 +164,7 @@ getter.on("end", () => {
 			.reduce((s, r) => (stats.cowardVotes[r] > stats.cowardVotes[s]) ? r : s);
 	}
 	
-	const totalCowards = Object.values(stats.cowardVotes).reduce((a, b) => a + b);
+	const totalCowards = Object.values(stats.cowardVotes).reduce((a, b) => a + b, 0);
 
 	console.log(`Total comments: ${stats.commentCount}`);
 	console.log(`Total votes: ${totalVotes + totalCowards + stats.votesAfterDeadline}`);
