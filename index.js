@@ -1,6 +1,6 @@
 const alphabet = "abcdefghijklmnopqrstuvwxyz".split(""); // change this string if you need a different alphabet
 
-console.log("Loading...");
+console.log("\x1bc" + "Loading...");
 
 const config = require("./config.json");
 const Getter = require("./getter.js");
@@ -65,7 +65,7 @@ getter.on("data", comment => {
 	if (stats.commentCount % 100 == 0) {
 		const totalVotes = Object.values(stats.votes).reduce((a, b) => a + b);
 
-		process.stdout.write("\x1bc");
+		process.stdout.write("\x1b[0;0f");
 
 		console.log(`${stats.commentCount}/${stats.videoStats.commentCount} comments, ` +
 					`${fg.light_green}${totalVotes} valid votes${util.colors.reset}, ` +
