@@ -84,7 +84,7 @@ module.exports = function(videoID) {
 	};
 
 	httpsReq("https://content.googleapis.com/youtube/v3/videos?", options, (data) => {
-		if (data.errorCode) getter.emit("error", data.errorCode);
+		if (data.errorCode) Getter.emit("error", data.errorCode);
 
 		var stats = data.items[0].statistics;
 		stats.published = data.items[0].snippet.publishedAt;
