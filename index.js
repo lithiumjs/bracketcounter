@@ -11,6 +11,7 @@ const bg = util.colors.bg;
 
 const stats = {
 	commentCount: 0,
+	comments: [],
 	votes: {},
 	shinyCowards: 0,
 	votesAfterDeadline: 0,
@@ -36,6 +37,8 @@ getter.on("data", comment => {
 	++stats.commentCount;
 
 	if (!comment || !comment.authorChannelId) return;
+
+	stats.comments.push(comment);
 
 	let hasAlreadyVoted = false;
 
@@ -115,8 +118,28 @@ getter.on("data", comment => {
 });
 
 getter.on("end", () => {
-	const totalVotes = Object.values(stats.votes).reduce((a, b) => a + b);
+	console.log("Please wait...");
+	stats.votes = {};
+	stats.commentors = {};
+	stats.comments.sort((a, b) => new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime())
+					.forEach(comment => {
+						let hasVoted = false;
+						if (stats.commentors[comment.authorChannelId.value]) return;
+
+						const c = (comment.textDisplay + "").toLowerCase();
+						const timeDifference = (new Date(comment.publishedAt).getTime() - new Date(stats.videoStats.published).getTime()) / 1000;
+						if (timeDifference > config.deadlineAfter) return;
+
+						const vote = util.allMatches(c, checker).reverse()[0];
+						if (vote) {
+							stats.votes[vote] = (stats.votes[vote] || 0) + 1;
+							stats.commentors[comment.authorChannelId.value] = 1;
+							process.stdout.write(vote);
+						}
+					});
+
 	process.stdout.write("\x1bc");
+	const totalVotes = Object.values(stats.votes).reduce((a, b) => a + b);
 	console.log(usedLetters
 				.sort((a, b) => stats.votes[b] - stats.votes[a])
 				.map((l, i) => {
