@@ -29,6 +29,7 @@ function httpsReq(uri, options, callback) {
 	});
 }
 
+// DEPRECATED: Will eat your API quota if used
 function getThread(getter, commentID) {
 	var options = {
 		maxResults: 100,
@@ -51,7 +52,7 @@ function getNext(getter, videoID, pageToken) {
 		maxResults: 100,
 		moderationStatus: "published",
 		order: "time",
-		part: "snippet",
+		part: "snippet, replies",
 		textFormat: "plainText",
 		videoId: videoID,
 		key: key
@@ -64,7 +65,11 @@ function getNext(getter, videoID, pageToken) {
 		data.items.forEach(function(item) {
 			if (!item || !item.snippet.topLevelComment) return;
 			getter.emit("data", item.snippet.topLevelComment.snippet);
-			if (item.snippet.totalReplyCount > 0) getThread(getter, item.id);
+			if (item.snippet.totalReplyCount > 0) {
+				item.replies.comments.forEach(function (reply) {
+					getter.emit("data", reply.snippet);
+				});
+			}
 		});
 		if (data.nextPageToken) {
 			setTimeout(() => getNext(getter, videoID, data.nextPageToken), 0);
