@@ -12,5 +12,6 @@
 		"yellow",
 		"light_yellow"
 	],
+	"showLatestParsedComment": false,
 	"deadlineAfter": 172800
 }

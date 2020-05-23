@@ -1,6 +1,6 @@
 const alphabet = "abcdefghijklmnopqrstuvwxyz".split(""); // change this string if you need a different alphabet
 
-console.log("\x1bc" + "Loading...");
+console.log("\x1b[?25l\x1bc" + "Loading...");
 
 const config = require("./config.json");
 const Getter = require("./getter.js");
@@ -18,7 +18,8 @@ const stats = {
 	commentors: {},
 	cowardVotes: {},
 	videoStats: {},
-	startedAt: Date.now()
+	startedAt: Date.now(),
+	rowAmount: 0
 };
 
 const usedLetters = alphabet.slice(0, config.names.length);
@@ -67,7 +68,7 @@ getter.on("data", comment => {
 
 	if (stats.commentCount % 100 == 0) {
 		const totalVotes = Object.values(stats.votes).reduce((a, b) => a + b);
-
+		if (stats.commentCount % 1000 == 0) process.stdout.write("\x1bc");
 		process.stdout.write("\x1b[0;0f");
 
 		console.log(`${stats.commentCount}/${stats.videoStats.commentCount} comments, ` +
@@ -114,6 +115,25 @@ getter.on("data", comment => {
 								util.colors.reset);
 					})
 					.join(""));
+
+		if (!config.showLatestParsedComment) return;
+
+		console.log(" ".repeat(process.stdout.columns) + 
+					"Latest parsed comment:" + " ".repeat(process.stdout.columns - 22));
+		process.stdout.write(fg.cyan +
+					comment.authorDisplayName +
+					util.colors.reset +
+					":" +
+					" ".repeat(process.stdout.columns - comment.authorDisplayName.length) +
+					comment.textDisplay.replace(checker, `${fg.light_blue}$&${util.colors.reset}`));
+
+		const linesToRemove = process.stdout.rows - stats.rowAmount;
+		const commentRows = comment.textDisplay.split("\n").reduce((a,b) => a + Math.floor(b.length / process.stdout.columns), 0);
+		process.stdout.write(" ".repeat(linesToRemove < 0 ? 0 : (linesToRemove * process.stdout.columns)));
+		stats.rowAmount = config.names.length +
+						  commentRows +
+						  Math.floor((comment.textDisplay.length) / process.stdout.columns) +
+						  8;
 	}
 });
 
@@ -198,5 +218,6 @@ getter.on("end", () => {
 		console.log(`The shiniest coward: ${theShiniestCoward} (${stats.cowardVotes[theShiniestCoward]} votes)`);
 	}
 	console.log(`Work time: ${(Date.now() - stats.startedAt) / 1000}s`);
+	process.stdout.write("\x1b[?25h");
 	process.exit();
 });
