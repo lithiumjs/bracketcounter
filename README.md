@@ -1,4 +1,4 @@
-# BFB Votes Collector
+# Bracketcounter
 
 ## How to run:
 
